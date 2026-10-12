@@ -1,0 +1,67 @@
+{
+  "name": "gree-desktop",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Controle local e automa\u00c3\u00a7\u00c3\u00b5es para aparelhos Gree no Windows",
+  "author": "Gree Desktop",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "diagnose": "node scripts/diagnose.mjs",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build && esbuild src/main/index.ts --bundle --platform=node --format=esm --external:electron --external:sql.js --outfile=dist/main/index.js && esbuild src/main/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/main/preload.cjs",
+    "start": "electron .",
+    "dev": "npm run build && electron .",
+    "package": "npm run build && electron-builder --win nsis --x64"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "lucide-react": "^0.468.0",
+    "sql.js": "^1.13.0"
+  },
+  "devDependencies": {
+    "electron": "^41.0.0",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.20.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/sql.js": "^1.4.9"
+  },
+  "build": {
+    "appId": "br.local.gree.desktop",
+    "productName": "Gree Desktop",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/sql.js/dist/sql-wasm.wasm",
+        "to": "sql-wasm.wasm"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/app.ico",
+      "signExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}
