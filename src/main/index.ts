@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, powerMonitor, safeStorage, screen } from 'electron';
 import path from 'node:path';
+import { configureStartup } from './startup';
 import { fileURLToPath } from 'node:url';
 import { Storage } from './storage';
 import { Controller } from './controller';
@@ -11,6 +12,7 @@ import { flyoutBounds } from '../shared/flyoutBounds';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const qaProfile = process.argv.find(arg => arg.startsWith('--qa-profile='))?.slice('--qa-profile='.length);
 if (qaProfile) app.setPath('userData',qaProfile);
+const backgroundLaunch=process.argv.includes('--background') || (process.platform==='darwin' && app.getLoginItemSettings().wasOpenedAtLogin);
 let window: BrowserWindow | null = null, tray: Tray, controller: Controller, quitting = false, draining = false;
 let pollTimer: ReturnType<typeof setInterval>, tickTimer: ReturnType<typeof setInterval>;
 let store: Storage;
@@ -33,7 +35,7 @@ if (!locked) app.quit();
 app.on('second-instance', () => { showFlyout(); });
 function show(page = 'devices') {
   if (window) { window.webContents.send('navigate',page); window.show(); window.focus(); return; }
-  window = new BrowserWindow({ width:1360, height:900, minWidth:980, minHeight:680, title:'Gree Desktop', backgroundColor:'#0c111b', autoHideMenuBar:true, show:!process.argv.includes('--background'),
+  window = new BrowserWindow({ width:1360, height:900, minWidth:980, minHeight:680, title:'Gree Desktop', backgroundColor:'#0c111b', autoHideMenuBar:true, show:!backgroundLaunch,
     webPreferences: { preload:path.join(here,'preload.cjs'), contextIsolation:true, nodeIntegration:false, sandbox:true, offscreen:process.argv.includes('--qa-offscreen') } });
   window.webContents.setWindowOpenHandler(() => ({ action:'deny' }));
   window.webContents.on('will-navigate', event => event.preventDefault());
@@ -72,7 +74,7 @@ function schedulePolling() { clearInterval(pollTimer); pollTimer = setInterval((
 if (locked) void app.whenReady().then(async () => {
   const wasm = app.isPackaged ? path.join(process.resourcesPath,'sql-wasm.wasm') : path.join(here,'../../node_modules/sql.js/dist/sql-wasm.wasm');
   store = await Storage.open(app.getPath('userData'),wasm);
-  controller = new Controller(store, () => { for (const view of [window,flyout]) if (view && !view.isDestroyed()) view.webContents.send('changed',{...controller.snapshot(),comfortSelection}); updateTray(); },safeStorage,undefined,event => {
+  controller = new Controller(store, () => { for (const view of [window,flyout]) if (view && !view.isDestroyed()) view.webContents.send('changed',{...controller.snapshot(),comfortSelection}); updateTray(); },{ isEncryptionAvailable:()=>safeStorage.isEncryptionAvailable() && (process.platform!=='linux' || safeStorage.getSelectedStorageBackend()!=='basic_text'), encryptString:value=>safeStorage.encryptString(value), decryptString:value=>safeStorage.decryptString(value) },undefined,event => {
     for (const view of [window,flyout]) if (view && !view.isDestroyed() && view.isVisible() && (view !== flyout || ['open','opening'].includes(flyoutLifecycle.state.phase))) view.webContents.send('deviceChange',event);
   });
   const handlers: Record<string, (...args: any[]) => unknown> = {
@@ -81,7 +83,7 @@ if (locked) void app.whenReady().then(async () => {
     saveDevice: (mac,changes) => controller.saveDevice(mac,changes), resume: mac => controller.resume(mac),
     saveGroup: group => controller.saveGroup(group), deleteGroup: id => controller.deleteGroup(id),
     saveRule: rule => controller.saveRule(rule), deleteRule: id => controller.deleteRule(id), testRule: id => controller.testRule(id),
-    settings: settings => { controller.saveSettings(settings); app.setLoginItemSettings({ name:qaProfile?'Gree Desktop QA':app.getName(), openAtLogin:settings.startup, args:app.isPackaged?['--background']:[app.getAppPath(),'--background'] }); schedulePolling(); },
+    settings: settings => { configureStartup(settings.startup,qaProfile?'Gree Desktop QA':app.getName()); controller.saveSettings(settings); schedulePolling(); },
     openDashboard: (page,mac) => { if (page && !['devices','groups','rules','settings','history','comfort'].includes(page)) throw new Error('Página inválida.'); if(mac!==undefined){if(page!=='comfort' || !controller.devices.some(d=>d.mac===mac))throw new Error('Aparelho inválido.');comfortSelection=mac;}hideFlyout();show(page || 'devices');if(mac!==undefined)window?.webContents.send('changed',{...controller.snapshot(),comfortSelection}); },
     hideFlyout,
     flyoutReady: () => flyoutLifecycle.state,
@@ -99,14 +101,16 @@ if (locked) void app.whenReady().then(async () => {
   tray.setContextMenu(Menu.buildFromTemplate([{ label:'Controle rápido',click:() => showFlyout() },{ label:'Abrir painel completo',click:() => show() },{ label:'Buscar aparelhos',click:() => void controller.discover() },{ type:'separator' },{ label:'Sair e parar automações',click:() => app.quit() }]));
   tray.on('click',() => showFlyout(true));
   tray.on('double-click',() => show());
-  if (process.argv.includes('--qa-dashboard')) {show();if (process.argv.includes('--background'))window?.hide();}
-  else if (!process.argv.includes('--background')) showFlyout();
+  if (process.argv.includes('--qa-dashboard')) {show();if (backgroundLaunch)window?.hide();}
+  else if (!backgroundLaunch) showFlyout();
   powerMonitor.on('suspend',() => controller.suspend());
   powerMonitor.on('resume',() => { void controller.tick().then(() => controller.poll()); });
+  configureStartup(controller.settings.startup,qaProfile?'Gree Desktop QA':app.getName());
   await controller.tick();
   tickTimer = setInterval(() => {updateTray();void controller.tick().catch(console.error);},1000); schedulePolling();
   void controller.discover();
 }).catch(error => { console.error(error); app.quit(); });
+app.on('activate', () => { if(controller) show(); });
 app.on('window-all-closed', () => {});
 app.on('before-quit', event => {
   if (quitting || !controller) return;

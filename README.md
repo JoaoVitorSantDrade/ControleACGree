@@ -1,19 +1,19 @@
-# Gree Desktop 0.3.1
+# Gree Desktop 0.4.0
 
-Aplicativo Windows em português para controlar aparelhos Gree pela rede local, organizar grupos e criar automações. Electron + React + TypeScript, sem conta na nuvem.
+Aplicativo para Windows, Linux e macOS em português para controlar aparelhos Gree pela rede local, organizar grupos e criar automações. Electron + React + TypeScript, sem conta na nuvem.
 
 ![Controle rápido pela bandeja](previews/bandeja-fundo-claro.png)
 
 ## Instalar e usar
 
-Execute `release/Gree Desktop Setup 0.3.1.exe`. O instalador permite escolher a pasta e cria um atalho na área de trabalho. O pacote não tem certificado de assinatura comercial.
+Baixe o pacote do seu sistema na [release 0.4.0](https://github.com/JoaoVitorSantDrade/ControleACGree/releases/tag/v0.4.0). No Windows, execute o EXE. No Linux, instale o DEB ou execute o AppImage. No macOS, abra o DMG e arraste o aplicativo para Aplicativos. O instalador permite escolher a pasta e cria um atalho na área de trabalho. O pacote não tem certificado de assinatura comercial.
 
 1. Conecte o computador à mesma rede dos aparelhos, já configurados no GREE+.
 2. Clique no ícone de temperatura (ou floco de neve) na bandeja do Windows para abrir o **controle rápido**. Selecione um aparelho ou grupo e ajuste energia, temperatura, modo e ventilação. O controle desaparece ao clicar fora ou pressionar Esc.
 3. Use a seta no topo para abrir o painel completo e **Buscar aparelhos**. Se necessário, use **Adicionar por IP**.
 4. No lápis de cada cartão, escolha nome e ambiente. Confirme as funções opcionais no manual ou no controle antes de habilitá-las. Turbo aparece no controle rápido quando confirmado.
 5. Use **Grupos** para comandos coletivos e **Automações** para criar regras. O histórico mostra a confirmação ou a falha de cada aparelho.
-6. Configure **Iniciar com Windows** em **Preferências** no Desktop. A inicialização automática fica somente na bandeja; abrir manualmente mostra o controle rápido.
+6. Configure **Iniciar com o sistema** em **Preferências** no Desktop. A inicialização automática fica somente na bandeja; abrir manualmente mostra o controle rápido.
 
 Se o ícone estiver oculto, abra a seta dos ícones da bandeja e arraste o ícone do aplicativo para a área visível. Clique direito oferece controle rápido, painel completo, automações e saída. O controle rápido usa o cartão escuro compacto inspirado na referência; o painel completo oferece temas claro, escuro e sistema.
 
@@ -51,7 +51,7 @@ Não há migração do banco nem alteração das regras de automação. Consulte
 - O teste manual executa as ações reais sem verificar gatilhos e condições; a interface pede confirmação antes do envio.
 - Comandos manuais, inclusive testes, pausam ações automáticas por 15 minutos. **Retomar** remove essa pausa.
 - Regras simultâneas que alteram o mesmo campo do mesmo aparelho têm prioridade pela ordem crescente do identificador. A regra conflitante é registrada como não executada.
-- Agenda usa o fuso horário do Windows. Horários perdidos não são executados retroativamente. O histórico detalha até sete dias de agendas perdidas em uma retomada.
+- Agenda usa o fuso horário do sistema. Horários perdidos não são executados retroativamente. O histórico detalha até sete dias de agendas perdidas em uma retomada.
 - Reiniciar, suspender ou perder comunicação interrompe a contagem de tempo ligado. Mudança de estado exige duas leituras válidas; o primeiro estado observado não dispara transição.
 
 ## Rede e dados
@@ -103,3 +103,13 @@ Não há leitura de umidade validada para estes aparelhos no protocolo local imp
 Este projeto é distribuído sob a [licença MIT](LICENSE), permitindo uso pessoal ou comercial, modificação e redistribuição, com preservação do aviso de copyright e da licença. O software é fornecido sem garantia.
 
 As dependências de terceiros permanecem sujeitas às respectivas licenças.
+
+## Linux e macOS
+
+Linux: DEB para Debian/Ubuntu ou AppImage executável (`chmod +x`). AppImage pode exigir libfuse2; bandeja depende do ambiente gráfico (GNOME pode precisar de extensão AppIndicator). Habilite um chaveiro Secret Service/KWallet para vincular aparelhos.
+
+macOS: arraste o app do DMG para Aplicativos. Os pacotes não possuem assinatura Developer ID nem notarização; o Gatekeeper pode exigir aprovação em Privacidade e Segurança. Autorize acesso à rede local quando solicitado.
+
+Todos: computador acordado, UDP 7000 acessível e mesma rede dos aparelhos. Dados/chaves ficam no perfil local de cada sistema; não se promete transferência de chaves protegidas entre sistemas.
+
+Testes de CI verificam runtime e UI com dados simulados; não substituem validação de aparelhos físicos, bandeja/autostart ou instalação em Linux/macOS reais. Não há nova lógica de automação nem migração de banco.

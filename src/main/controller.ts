@@ -42,7 +42,7 @@ export class Controller {
   }
   private async key(d: Device) {
     const cached = this.keys.get(d.mac); if (cached) return cached;
-    validate.ensure(this.protector.isEncryptionAvailable(), 'Proteção de dados do Windows indisponível.');
+    validate.ensure(this.protector.isEncryptionAvailable(), 'Proteção de chaves do sistema indisponível. No Linux, habilite um chaveiro Secret Service ou KWallet.');
     const saved = this.store.all<{ mac: string; key: string }>('key').find(k => k.mac === d.mac);
     if (saved) {
       try { const key = this.protector.decryptString(Buffer.from(saved.key,'base64')); this.keys.set(d.mac,key); return key; }
