@@ -1,12 +1,14 @@
 # Validação local — Gree Desktop 0.4.1 — 13/10/2026
 
+Refinamento de aletas: substituída animação por diagrama estático de direção/faixa; ensaio completo de UX e build passaram. Instalador local reconstruído com esse refinamento.
+
 - 51 testes unitários passaram; TypeScript, build e instalador Windows x64 NSIS concluídos.
 - Executável empacotado iniciado com perfil de QA isolado: SQLite, conforto, interface e descoberta/leitura dos dois aparelhos GCM passaram. Nenhum comando físico enviado; registro de autostart não alterado.
 - Fluxo de instalação/atualização não executado sobre o aplicativo em uso.
 - Mac Intel removido da matriz e dos alvos macOS. Release 0.4.0 recebe aviso de última versão suportada; downloads históricos preservados.
 - Esta entrega gera o instalador 0.4.1 local; não afirma builds Linux/macOS 0.4.1 nem release pública 0.4.1.
 
-Instalador: `release/Gree-Desktop-0.4.1-win-x64.exe`. SHA256: `9f9d72557d79f5d828805561641f1c7fc6efe0821dfe86d6149c35d5d10a5da2`.
+Instalador: `release/Gree-Desktop-0.4.1-win-x64.exe`. SHA256: `60238bd450055f9997cbb43b74836d9bddabbf5689d98cf933d2b79ed483b240`.
 
 ## Evidências anteriores
 

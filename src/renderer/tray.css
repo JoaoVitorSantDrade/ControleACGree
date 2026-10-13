@@ -164,12 +164,6 @@
 
 /* Aletas: direção ilustrativa, sem sugerir posição medida pelo sensor. */
 .select-content{display:flex;align-items:center;gap:8px;min-width:0}.select-content .vane-icon{flex-shrink:0}
-.vane-blade{transform-origin:8px 14px;transform:rotate(var(--vane-angle))}
-.vane-icon.swinging .vane-blade{animation:vane-preview 3s ease-in-out infinite}
-@keyframes vane-preview{0%,100%{transform:rotate(calc(var(--vane-angle) - 9deg))}50%{transform:rotate(calc(var(--vane-angle) + 9deg))}}
-.vane-icon.full-swing .vane-blade{animation-name:vane-preview-full}
-@keyframes vane-preview-full{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(55deg)}}
-.tray-surface.is-hidden .vane-blade{animation-play-state:paused}
 .tray-surface.is-heating:before{background:radial-gradient(ellipse at 72% 0%,#8b4b30a0,transparent 65%)}
 .tray-surface.is-heating .mode-segments>button.selected{background:linear-gradient(135deg,#db7438,#e8a36a);box-shadow:0 2px 12px #df86322a}
 .tray-surface.is-heating .quick-power.on{background:#e9a16b;color:#3b2118;box-shadow:0 0 18px #e99e4930}
@@ -178,7 +172,6 @@
 .tray-surface.is-heating .organic-thumb{box-shadow:0 0 16px #e9a16b25}
 .tray-surface.is-heating .climate-extras>button.enabled{color:#efb483;background:#e3994f15;border-color:#e3994f30}
 .tray-surface.is-heating .quick-brand>svg{color:#efb483}
-@media(prefers-reduced-motion:reduce){.vane-icon.swinging .vane-blade{animation:none}}
 
 .tray-surface .inline-select:has(.vane-icon) .inline-options{min-width:220px;right:0;left:auto}
 .tray-surface.is-heating .ac-depth.on .ac-display,.tray-surface.is-heating .ac-depth.on .ac-led{fill:#c17637}
