@@ -1,3 +1,12 @@
+# Próxima atualização — aletas visuais e modo Calor
+
+- Direção vertical com SVGs mostrando cinco posições fixas, oscilação completa e oscilações por região; nomes descritivos substituem números ambíguos.
+- Ícone de foguete para Turbo, distinguindo-o do modo Auto.
+- Modo Calor confirmado usa tons de âmbar/laranja no controle rápido, preservando grafite, foco e movimento reduzido.
+- Crédito: sugestão de ilustrar a posição das aletas por **[@dinoriquinho](https://twitter.com/dinoriquinho)**.
+
+---
+
 # Gree Desktop 0.4.0 — Windows, Linux e macOS
 
 - Pacotes Windows x64 (EXE), Linux x64 (AppImage e DEB) e macOS Intel/Apple Silicon (DMG e ZIP).

@@ -1,11 +1,11 @@
-import { useEffect, useId, useRef, useState, type ButtonHTMLAttributes } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode, type ButtonHTMLAttributes } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { pointerTemperature, sliderCenter } from '../../shared/ux';
 
 export function IconButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
   return <button type="button" {...props} className={`ui-icon-button ${props.className || ''}`}/>;
 }
-export interface SelectOption { value: string; label: string; section?: string }
+export interface SelectOption { value: string; label: string; section?: string; visual?: ReactNode }
 export function InlineSelect({label,value,options,disabled,onChange}:{label:string;value:string;options:SelectOption[];disabled?:boolean;onChange:(value:string)=>void}) {
   const [open,setOpen]=useState(false), id=useId(), root=useRef<HTMLDivElement>(null);
   const [active,setActive]=useState(0),[page,setPage]=useState(0),[capacity,setCapacity]=useState(5),[above,setAbove]=useState(true);
@@ -19,7 +19,7 @@ export function InlineSelect({label,value,options,disabled,onChange}:{label:stri
     if(open && ['Enter',' '].includes(e.key)){e.preventDefault();select(active);}
     if(e.key==='Tab')setOpen(false);
   }}><button type="button" disabled={disabled} aria-label={label} aria-haspopup="listbox" aria-expanded={open} aria-controls={id} aria-activedescendant={open?`${id}-${active}`:undefined} onClick={()=>{const index=Math.max(0,options.findIndex(o=>o.value===value));setActive(index);setPage(Math.floor(index/capacity));setOpen(v=>!v);}}><span>{options.find(o=>o.value===value)?.label || 'Misto / —'}</span><ChevronDown size={14}/></button>
-  {open && <div className={`inline-options ${above?'above':'below'}`}><div id={id} role="listbox" aria-label={label}>{options.slice(page*capacity,(page+1)*capacity).map((o,offset)=>{const i=page*capacity+offset;return <button type="button" id={`${id}-${i}`} key={o.value} role="option" aria-selected={value===o.value} tabIndex={-1} className={active===i?'active':''} onPointerMove={()=>setActive(i)} onClick={()=>select(i)}><span>{o.label}</span>{o.value===value && <Check size={14}/>}</button>;})}</div>{options.length>capacity && <div className="menu-pages"><button type="button" aria-label="Página anterior" disabled={page===0} onClick={()=>{setPage(p=>p-1);setActive((page-1)*capacity);}}><ChevronLeft size={16}/></button><span>{page+1}/{Math.ceil(options.length/capacity)}</span><button type="button" aria-label="Próxima página" disabled={(page+1)*capacity>=options.length} onClick={()=>{setPage(p=>p+1);setActive((page+1)*capacity);}}><ChevronRight size={16}/></button></div>}</div>}</div>;
+  {open && <div className={`inline-options ${above?'above':'below'}`}><div id={id} role="listbox" aria-label={label}>{options.slice(page*capacity,(page+1)*capacity).map((o,offset)=>{const i=page*capacity+offset;return <button type="button" id={`${id}-${i}`} key={o.value} role="option" aria-selected={value===o.value} tabIndex={-1} className={active===i?'active':''} onPointerMove={()=>setActive(i)} onClick={()=>select(i)}><span className="select-content">{o.visual}{o.label}</span>{o.value===value && <Check size={14}/>}</button>;})}</div>{options.length>capacity && <div className="menu-pages"><button type="button" aria-label="Página anterior" disabled={page===0} onClick={()=>{setPage(p=>p-1);setActive((page-1)*capacity);}}><ChevronLeft size={16}/></button><span>{page+1}/{Math.ceil(options.length/capacity)}</span><button type="button" aria-label="Próxima página" disabled={(page+1)*capacity>=options.length} onClick={()=>{setPage(p=>p+1);setActive((page+1)*capacity);}}><ChevronRight size={16}/></button></div>}</div>}</div>;
 }
 
 export function OrganicSlider({value,disabled,onPreview,onCommit,onAdjusting,cancelKey}:{value:number;disabled?:boolean;onPreview:(value:number|undefined)=>void;onCommit:(value:number)=>void;onAdjusting:(value:boolean)=>void;cancelKey?:string}) {

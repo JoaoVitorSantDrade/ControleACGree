@@ -161,3 +161,28 @@
 @media(prefers-reduced-motion:reduce){.tray-surface button{transition:none!important}.tray-surface button:hover,.tray-surface button:active{transform:none!important}}
 
 .tray-surface .pause-indicator svg{color:inherit}
+
+/* Aletas: direção ilustrativa, sem sugerir posição medida pelo sensor. */
+.select-content{display:flex;align-items:center;gap:8px;min-width:0}.select-content .vane-icon{flex-shrink:0}
+.vane-blade{transform-origin:8px 14px;transform:rotate(var(--vane-angle))}
+.vane-icon.swinging .vane-blade{animation:vane-preview 3s ease-in-out infinite}
+@keyframes vane-preview{0%,100%{transform:rotate(calc(var(--vane-angle) - 9deg))}50%{transform:rotate(calc(var(--vane-angle) + 9deg))}}
+.vane-icon.full-swing .vane-blade{animation-name:vane-preview-full}
+@keyframes vane-preview-full{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(55deg)}}
+.tray-surface.is-hidden .vane-blade{animation-play-state:paused}
+.tray-surface.is-heating:before{background:radial-gradient(ellipse at 72% 0%,#8b4b30a0,transparent 65%)}
+.tray-surface.is-heating .mode-segments>button.selected{background:linear-gradient(135deg,#db7438,#e8a36a);box-shadow:0 2px 12px #df86322a}
+.tray-surface.is-heating .quick-power.on{background:#e9a16b;color:#3b2118;box-shadow:0 0 18px #e99e4930}
+.tray-surface.is-heating .organic-fill{background:linear-gradient(90deg,#d9783c,#e9ad79)}
+.tray-surface.is-heating .organic-thumb:after{background:#eda46b}
+.tray-surface.is-heating .organic-thumb{box-shadow:0 0 16px #e9a16b25}
+.tray-surface.is-heating .climate-extras>button.enabled{color:#efb483;background:#e3994f15;border-color:#e3994f30}
+.tray-surface.is-heating .quick-brand>svg{color:#efb483}
+@media(prefers-reduced-motion:reduce){.vane-icon.swinging .vane-blade{animation:none}}
+
+.tray-surface .inline-select:has(.vane-icon) .inline-options{min-width:220px;right:0;left:auto}
+.tray-surface.is-heating .ac-depth.on .ac-display,.tray-surface.is-heating .ac-depth.on .ac-led{fill:#c17637}
+.tray-surface.is-heating .organic-thumb:after{box-shadow:0 0 6px #eda46b38}
+.tray-surface.is-heating button:focus-visible{outline-color:#efb483}
+.tray-surface.is-heating .organic-range.keyboard-focus:not(.dragging) .organic-thumb{outline-color:#efb483}
+@media(hover:hover){.tray-surface.is-heating .quick-power:hover:not(:disabled){border-color:#efb48380;box-shadow:0 0 14px #efb48326}.tray-surface.is-heating .climate-extras>button:hover:not(:disabled),.tray-surface.is-heating .inline-select>button:hover:not(:disabled){border-color:#efb4834d;background-color:#efb4830c;box-shadow:0 0 10px #efb48310}}
