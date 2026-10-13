@@ -17,9 +17,6 @@ jobs:
           - os: ubuntu-22.04
             platform: linux
             arch: x64
-          - os: macos-15-intel
-            platform: mac
-            arch: x64
           - os: macos-15
             platform: mac
             arch: arm64
@@ -83,4 +80,4 @@ jobs:
           mkdir -p publish
           find packages -type f \( -name '*.exe' -o -name '*.AppImage' -o -name '*.deb' -o -name '*.dmg' -o -name '*.zip' \) -exec cp {} publish/ \;
           (cd publish && sha256sum * > SHA256SUMS.txt)
-          gh release create "$GITHUB_REF_NAME" publish/* --title "Gree Desktop ${GITHUB_REF_NAME#v}" --notes-file PATCH_NOTES_0.4.0.md
+          gh release create "$GITHUB_REF_NAME" publish/* --title "Gree Desktop ${GITHUB_REF_NAME#v}" --notes-file "PATCH_NOTES_${GITHUB_REF_NAME#v}.md"

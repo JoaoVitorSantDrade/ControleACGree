@@ -113,3 +113,9 @@ macOS: arraste o app do DMG para Aplicativos. Os pacotes não possuem assinatura
 Todos: computador acordado, UDP 7000 acessível e mesma rede dos aparelhos. Dados/chaves ficam no perfil local de cada sistema; não se promete transferência de chaves protegidas entre sistemas.
 
 Testes de CI verificam runtime e UI com dados simulados; não substituem validação de aparelhos físicos, bandeja/autostart ou instalação em Linux/macOS reais. Não há nova lógica de automação nem migração de banco.
+
+## Fim do suporte a Mac Intel
+
+A **0.4.0 é a última versão com suporte a Mac Intel (x64)**. Os [downloads da 0.4.0](https://github.com/JoaoVitorSantDrade/ControleACGree/releases/tag/v0.4.0) são mantidos, mas não receberão novas correções. A partir da 0.4.1, macOS é compilado somente para Apple Silicon (arm64); Windows x64 e Linux x64 continuam suportados.
+
+Instalador Windows local da 0.4.1: `release/Gree-Desktop-0.4.1-win-x64.exe`.
