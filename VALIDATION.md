@@ -1,3 +1,16 @@
+# Validação — Gree Desktop 0.4.0 — 13/10/2026
+
+- 51 testes unitários passaram localmente e nos quatro runners nativos.
+- Build/empacotamento passaram em Windows x64, Ubuntu 22.04 x64, macOS 15 Intel e macOS 15 Apple Silicon.
+- Smoke nativo de Electron, montagem da interface e SQLite passou nas quatro arquiteturas; dados IPC simulados e nenhum comando físico.
+- Ensaio completo de UX passou no Windows local. Autostart Linux tem teste de geração da entrada; ativação real de autostart/itens de login, bandeja e instalação em Linux/macOS não foram validadas em máquinas de uso.
+- Sem nova migração de banco ou alteração das regras; migração de chaves entre sistemas não é suportada.
+- Pacotes macOS sem Developer ID/notarização. Windows continua sem assinatura comercial.
+
+Evidência: [GitHub Actions](https://github.com/JoaoVitorSantDrade/ControleACGree/actions/runs/38393397543). Downloads e hashes na release v0.4.0.
+
+## Evidências históricas
+
 # Validação — Gree Desktop 0.3.1 — 13/10/2026
 
 - 50 testes unitários passaram; TypeScript e build concluídos.
