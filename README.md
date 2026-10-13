@@ -1,12 +1,18 @@
-# Gree Desktop 0.4.0
+# Gree Desktop 0.4.1
 
 Aplicativo para Windows, Linux e macOS em português para controlar aparelhos Gree pela rede local, organizar grupos e criar automações. Electron + React + TypeScript, sem conta na nuvem.
 
-![Controle rápido pela bandeja](previews/bandeja-fundo-claro.png)
+![Controle rápido pela bandeja](previews/calor-nevoa.png)
+
+## Novidades da 0.4.1
+
+- Direção vertical com desenhos estáticos: linha para posição fixa e arco para faixa de oscilação. Sugestão de [@dinoriquinho](https://twitter.com/dinoriquinho).
+- Turbo com ícone próprio e modo Calor com tons âmbar/laranja, preservando o design Névoa.
+- Windows x64, Linux x64 e macOS Apple Silicon. A 0.4.0 foi a última versão com suporte a Mac Intel.
 
 ## Instalar e usar
 
-Baixe o pacote do seu sistema na [release 0.4.0](https://github.com/JoaoVitorSantDrade/ControleACGree/releases/tag/v0.4.0). No Windows, execute o EXE. No Linux, instale o DEB ou execute o AppImage. No macOS, abra o DMG e arraste o aplicativo para Aplicativos. O instalador permite escolher a pasta e cria um atalho na área de trabalho. O pacote não tem certificado de assinatura comercial.
+Baixe o pacote do seu sistema na [release 0.4.1](https://github.com/JoaoVitorSantDrade/ControleACGree/releases/tag/v0.4.1). No Windows, execute o EXE. No Linux, instale o DEB ou execute o AppImage. No macOS, abra o DMG e arraste o aplicativo para Aplicativos. O instalador Windows permite escolher a pasta e cria um atalho na área de trabalho. O pacote não tem certificado de assinatura comercial.
 
 1. Conecte o computador à mesma rede dos aparelhos, já configurados no GREE+.
 2. Clique no ícone de temperatura (ou floco de neve) na bandeja do Windows para abrir o **controle rápido**. Selecione um aparelho ou grupo e ajuste energia, temperatura, modo e ventilação. O controle desaparece ao clicar fora ou pressionar Esc.
@@ -24,9 +30,9 @@ Fechar a janela mantém o processo e as regras na bandeja. Para encerrar, use **
 - **Prioridade ao controle externo:** alterações em energia, ajuste, modo, ventilação e extras confirmados, recebidas fora dos comandos do desktop, pausam todas as automações daquele aparelho até **Retomar**. A proteção persiste ao reiniciar; em grupos, outros aparelhos continuam funcionando. O desktop não distingue controle físico de mobile e não garante detecção instantânea.
 - Comandos explícitos continuam disponíveis sem remover a proteção. A pausa manual de 15 minutos é independente; remover uma não remove a outra. Retomar não executa horários perdidos nem ações acumuladas. Antes de cada comando automático, uma nova leitura revalida estado, proteção e condições.
 - **Conforto:** temperaturas ambiente/definida em 1 hora, 24 horas e 7 dias; mínimo, máximo, cobertura, eventos e consulta do gráfico por teclado. A coleta começa nesta versão, com uma amostra por minuto e retenção local de 30 dias. Sensor inválido, comunicação perdida e suspensão deixam lacunas.
-- **Ligado observado:** hoje e nos últimos 7 dias, com indicação dos períodos sem observação. Isso não mede compressor, consumo, kWh ou custo; não reconstrói períodos em que o computador estava desligado.
+- **Ligado observado:** hoje e nos últimos 7 dias, contando os intervalos com leituras válidas e contínuas. Isso não mede compressor, consumo, kWh ou custo; não reconstrói períodos em que o computador estava desligado.
 - **Manutenção:** lembrete de filtro por calendário, inicialmente desativado. Configure a última manutenção e o intervalo conforme o manual; o padrão sugerido é 30 dias. Marque como feito ou adie sete dias na página Conforto.
-- **Bandeja:** resumo da casa com páginas, favoritos primeiro, próxima agenda, detalhes de proteção e origem/horário da leitura ambiente. O acompanhamento de conforto, as automações e a inicialização com Windows ficam no Desktop. Menus e vistas permanecem sem rolagem; o ícone não pisca.
+- **Bandeja:** resumo da casa com páginas, favoritos primeiro, próxima agenda, detalhes de proteção e origem/horário da leitura ambiente. O acompanhamento de conforto, as automações e a inicialização com o sistema ficam no Desktop. Menus e vistas permanecem sem rolagem; o ícone não pisca.
 
 O histórico permite filtrar controle externo e proteção, com detalhes dos campos e valores detectados. Os registros existentes da 0.2.0 continuam legíveis. Configurações anteriores são preservadas; novos registros de acompanhamento são adicionados ao mesmo SQLite.
 
@@ -36,7 +42,7 @@ Design Névoa com superfícies grafite, iluminação contextual e destaque ciano
 
 O slider acompanha o arraste e envia um comando ao soltar. “Ajustando” e “Confirmando” distinguem prévia e confirmação; falhas restauram o estado confirmado. Mudanças reais recebem feedback localizado, respeitando movimento reduzido.
 
-A bandeja anima abertura e saída; menus e detalhes permanecem dentro da janela e listas grandes usam páginas. Em áreas baixas, “Modo e ventilação” abre uma vista interna sem rolagem. Preferências e resultados usam toasts temporários, com pausa ao passar o mouse ou focar.
+A bandeja anima abertura e saída; menus e detalhes permanecem dentro da janela e listas grandes usam páginas. Em áreas baixas, “Controles do aparelho” abre uma vista interna sem rolagem. Preferências e resultados usam toasts temporários, com pausa ao passar o mouse ou focar.
 
 Não há migração do banco nem alteração das regras de automação. Consulte a validação para os limites do teste de atualização.
 
@@ -66,16 +72,17 @@ Dados ficam em `%APPDATA%/gree-desktop/gree.sqlite` durante o desenvolvimento; o
 
 ## Desenvolvimento
 
-Requer Node.js 22 ou superior e Windows para validar o aplicativo desktop.
+Requer Node.js 22 ou superior. Compile cada pacote no respectivo sistema; macOS tem suporte somente a Apple Silicon.
 
-```powershell
-npm install
+```sh
+npm ci
 npm run diagnose
 npm test
 npm run build
 npm start
-npm run package
 ```
+
+Empacotamento: `npm run package` no Windows, `npm run package:linux` no Linux e `npm run package:mac` no macOS Apple Silicon. O workflow de release prepara o ícone macOS e publica os pacotes somente após os testes de todos os alvos passarem.
 
 `npm run diagnose -- --ip=192.168.0.67` busca diretamente um aparelho. `--verify-command` reaplica a temperatura existente e confirma a leitura; sem essa opção, não envia comando de controle. O diagnóstico não grava chaves e salva o relatório em `diagnostics/latest.json` (ignorado pelo Git).
 
@@ -94,7 +101,7 @@ Referência do protocolo: [gree-remote](https://github.com/tomikaa87/gree-remote
 
 ### Bandeja compacta e temperatura no ícone
 
-O controle rápido usa um trilho de 14 px, mantendo a bola e os alvos de clique. O ícone da área de notificações mostra a temperatura ambiente do primeiro aparelho favorito (ou do primeiro cadastrado quando nenhum é favorito). Passe o mouse para conferir aparelho, unidade e estado da rede. Leitura ausente, vencida ou offline restaura o ícone Gree; a temperatura definida nunca substitui o sensor. O ícone só muda quando o valor exibido muda.
+O controle rápido usa um trilho de 6 px, mantendo a bola e os alvos de clique. O ícone da área de notificações mostra a temperatura ambiente do primeiro aparelho favorito (ou do primeiro cadastrado quando nenhum é favorito). Passe o mouse para conferir aparelho, unidade e estado da rede. Leitura ausente, vencida ou offline restaura o ícone Gree; a temperatura definida nunca substitui o sensor. O ícone só muda quando o valor exibido muda.
 
 Não há leitura de umidade validada para estes aparelhos no protocolo local implementado. O modo Secar não mede umidade; nenhum percentual estimado é mostrado.
 
