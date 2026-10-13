@@ -44,7 +44,8 @@
     },
     "files": [
       "dist/**/*",
-      "package.json"
+      "package.json",
+      "LICENSE"
     ],
     "extraResources": [
       {
@@ -63,5 +64,6 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true
     }
-  }
+  },
+  "license": "MIT"
 }

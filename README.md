@@ -97,3 +97,9 @@ Referência do protocolo: [gree-remote](https://github.com/tomikaa87/gree-remote
 O controle rápido usa um trilho de 14 px, mantendo a bola e os alvos de clique. O ícone da área de notificações mostra a temperatura ambiente do primeiro aparelho favorito (ou do primeiro cadastrado quando nenhum é favorito). Passe o mouse para conferir aparelho, unidade e estado da rede. Leitura ausente, vencida ou offline restaura o ícone Gree; a temperatura definida nunca substitui o sensor. O ícone só muda quando o valor exibido muda.
 
 Não há leitura de umidade validada para estes aparelhos no protocolo local implementado. O modo Secar não mede umidade; nenhum percentual estimado é mostrado.
+
+## Licença
+
+Este projeto é distribuído sob a [licença MIT](LICENSE), permitindo uso pessoal ou comercial, modificação e redistribuição, com preservação do aviso de copyright e da licença. O software é fornecido sem garantia.
+
+As dependências de terceiros permanecem sujeitas às respectivas licenças.
