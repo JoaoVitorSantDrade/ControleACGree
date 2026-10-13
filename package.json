@@ -1,9 +1,9 @@
 {
   "name": "gree-desktop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
-  "description": "Controle local e automa\u00c3\u00a7\u00c3\u00b5es para aparelhos Gree no Windows",
+  "description": "Controle local e automações para aparelhos Gree no Windows",
   "author": "Gree Desktop",
   "main": "dist/main/index.js",
   "scripts": {

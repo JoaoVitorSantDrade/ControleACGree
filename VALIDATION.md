@@ -1,10 +1,23 @@
+# Validação — Gree Desktop 0.3.1 — 13/10/2026
+
+- 50 testes unitários passaram; TypeScript e build concluídos.
+- Ensaio Electron simulado: slider, envio único, rollback, teclado, menus, hover sem reflow, toasts, proteção, histórico e gráfico passaram. Escalas emuladas 100%, 125%, 150% e 200%; vistas compactas sem rolagem; movimento reduzido.
+- Pacote 0.3.1 executado com perfil isolado: SQLite, interface, conforto e leituras físicas dos dois aparelhos GCM funcionaram. Nenhum comando físico foi enviado nesta entrega.
+- Compatibilidade 0.3.0 → 0.3.1 validada entre executáveis: aparelhos, grupos, regras, preferências e histórico preservados. Dois registros de chaves protegidas permaneceram idênticos após encerramento normal.
+- Instalador NSIS gerado. Instalação/atualização sobre aplicativo em uso não executada; não se afirma validação desse fluxo nem inspeção física em dois monitores.
+
+Instalador: `release/Gree Desktop Setup 0.3.1.exe`, 108300987 bytes.
+SHA256: `a9cc8ffc860e4327f0f6f5031f51011888a05e0e57fdc4b731ce864894109e49`.
+
+## Evidências históricas da 0.3.0 e refinamentos
+
 # Validação — Gree Desktop 0.3.0 — 12/10/2026
 
 ## Resultado
 
-Código, TypeScript, build e instalador NSIS 0.3.0 gerados. **49 testes unitários passaram**, além do ensaio de interface Electron e da execução do pacote final.
+Código, TypeScript, build e instalador NSIS 0.3.0 gerados. **50 testes unitários passaram**, além do ensaio de interface Electron e da execução do pacote final.
 
-Instalador: `release/Gree Desktop Setup 0.3.0.exe`, 107.933.124 bytes. SHA256: `0F62ED6AF47ECBEC52E0EECBD4348C82A02B1D20642F651D06E6D375992E42BC`.
+Instalador: `release/Gree Desktop Setup 0.3.0.exe`, 108.289.784 bytes. SHA256: `6D75C55EBEBEB31E6C10515BE929FB08CABA4C37D432735C3928AFEA7E218238`.
 
 ## Proteção externa — dispositivos simulados
 
@@ -63,4 +76,47 @@ Na validação original da 0.1.0, a temperatura existente de 24 °C foi reaplica
 ## Correção do foco do slider
 
 Contorno removido no clique e arraste; foco de teclado preservado na bola. A mensagem Ajustando usa altura e entrelinha fixas para evitar deslocamento de 2 px. Ensaio Electron passou com comparação das posições antes/durante o arraste, teclado, cancelamento, falha e escalas de 100%, 125%, 150% e 200%. Build e instalador regenerados. Nenhum comando físico foi enviado neste ensaio.
+
+
+## Bandeja minimalista e ícone de temperatura
+
+Janela padrão reduzida de 780 para 680 px, trilho de 14 px e ambiente sem cartão volumoso. Rodapé e status separados; falhas mantêm acesso pelo status, toasts flutuam no cabeçalho sem deslocar controles. Temperatura no ícone vem somente de sensor atual do primeiro favorito/primeiro aparelho; leituras vencidas restauram o ícone normal. Bitmap testado para limites e mudança de valor. Pacote abriu SQLite e consultou os dois aparelhos físicos (GCM), sem comandos; relatório .cache/packaged-minimal/report.json. Umidade não tem suporte validado e não foi adicionada.
+
+
+## Controle rápido e gráfico refinados
+
+Removidos rótulo redundante, rodapé com atalhos Desktop e vista Conforto agora. Origem/horário permanecem em detalhes de ambiente. Modo/Ventilação em duas colunas amplas, Turbo em linha própria, limites do slider integrados e seleção de textos desativada, preservando edição de campos. Gráfico inicia na primeira amostra disponível e não interpola lacunas. Removidos os dois parágrafos explicativos de observação. Ensaio Electron atualizado passou (ponteiro, teclado, falhas, leituras vencidas, grupos, menus, escalas 100/125/150/200%, vistas pequenas e proteção); gráfico conferido com primeira amostra uma hora antes, apesar do período de 24 h. Os 50 testes passaram. Capturas em previews/bandeja-minimalista.png e previews/conforto.png. Neste refinamento não foram enviados comandos físicos nem executado o instalador.
+
+
+
+## Referência visual Névoa
+
+Composição refeita com seleção direta de modos, Vento/Direção vertical e extras condicionados aos recursos confirmados. 50 testes passaram; renderização inspecionada em previews/bandeja-nevoa.png (dados simulados), com todos os controles sem rolagem. Ensaio Electron verifica confirmações, restauração de falha, teclado, menus, escalas e proteção. Sem envio de comandos aos aparelhos físicos neste refinamento. Instalador regenerado, sem instalação automática.
+
+
+## Slider com escala Névoa
+
+Trilho de 6 px, alça grafite com núcleo azul e 15 marcações com rótulos em 16/23/30 graus. Centro e preenchimento mantêm a geometria acessível anterior; foco de teclado preservado e sem contorno no arraste. Inspeção visual em previews/slider-nevoa.png. 50 testes e ensaio Electron de extremos, arraste, teclado, cancelamento, falha, consultas concorrentes e escalas passaram. Instalador regenerado sem instalação automática ou comandos físicos.
+
+
+
+## Alinhamento dos extremos da escala
+
+Trilho visível limitado ao percurso útil da alça: começa no centro da posição 16 e termina no centro da posição 30. Preenchimento usa o mesmo ponto inicial. Ensaio Electron compara centros das marcações com as pontas do trilho (tolerância menor que 0,5 px), além de arraste, teclado e restauração. Captura atualizada em previews/slider-nevoa.png. Nenhum comando físico enviado.
+
+
+
+## Profundidade e movimento da ilustração
+
+Build e ensaio Electron concluídos. Inspeção visual dos estados ligado/desligado e comparação da geometria da bandeja. Testes verificam animação da aleta com oscilação, fluxo em refrigeração e ausência de ambas as animações em movimento reduzido, além dos controles e escalas existentes. Captura simulada em previews/ar-condicionado-nevoa.png. Instalação automática e comandos físicos não foram executados neste refinamento.
+
+
+## 13/10/2026 — contorno sobre fundo claro e pausa compacta
+
+Build concluído. Inspeção renderizada sobre fundo branco, sem sombra externa cortada: .cache/ux-qa/white-background.png. Sombra nativa desativada na janela de bandeja; confirmação final no compositor Windows do usuário permanece pela instalação. Pausa agora em indicador SVG junto ao nome, com vistas próprias para proteção externa/pausa temporária e retomada explícita. Ensaios de bandeja verificam rodapé com pelo menos 16 px livres abaixo, detalhes de proteção, menus, escalas e ausência de rolagem. Nenhum comando físico ou instalação automática neste refinamento.
+
+
+## 13/10/2026 — microanimações consistentes
+
+TypeScript e build concluídos. Ensaio Electron força hover em Power, modo, seletor de ventilação, extra e atalho: transformações presentes e posições/tamanhos de layout inalterados. Suíte de interface também verifica slider, falhas, menus, toasts, proteção e escalas. Sem comandos físicos ou instalação automática.
 

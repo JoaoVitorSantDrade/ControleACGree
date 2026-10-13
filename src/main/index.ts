@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { Storage } from './storage';
 import { Controller } from './controller';
 import { FlyoutLifecycle } from './flyoutLifecycle';
+import { ambientReading } from '../shared/ux';
+import { temperatureBitmap } from './trayTemperature';
 import { flyoutBounds } from '../shared/flyoutBounds';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +17,14 @@ let store: Storage;
 let flyout: BrowserWindow | null = null;
 let lastFlyoutBlur = 0;
 let comfortSelection:string|undefined;
+let trayReadingKey='';
+function updateTray() {
+  if(!tray || !controller)return;
+  const ds=controller.devices,d=ds.find(d=>d.favorite) || ds[0],r=d?ambientReading(d,Date.now(),controller.settings.pollSeconds):undefined;
+  const key=r?.fresh?String(r.value):'none';
+  if(key!==trayReadingKey){trayReadingKey=key;tray.setImage(r?.fresh?nativeImage.createFromBitmap(temperatureBitmap(r.value!),{width:32,height:32}).resize({width:24,height:24}):nativeImage.createFromPath(path.join(here,'../renderer/app-icon.png')).resize({width:24,height:24}));}
+  tray.setToolTip(`${d?`${d.name} · Ambiente ${r?.label}\n`:""}Gree Desktop · ${ds.filter(d=>d.online&&d.state.Pow===1).length} ligados · ${ds.filter(d=>d.online).length}/${ds.length} conectados · ${ds.filter(d=>d.externalOverride).length} protegidos`);
+}
 let consumeBlurClick = false;
 const flyoutLifecycle = new FlyoutLifecycle(state => { if (flyout && !flyout.isDestroyed()) flyout.webContents.send('flyoutTransition',state); }, () => flyout?.hide());
 function hideFlyout() { if (flyout?.isVisible() && flyoutLifecycle.state.phase !== 'closing') flyoutLifecycle.transition(false); }
@@ -44,7 +54,7 @@ function showFlyout(toggle = false) {
     if (toggle && flyout.isVisible() && flyoutLifecycle.state.phase !== 'closing') { hideFlyout(); return; }
     placeFlyout();flyout.show();flyout.focus();flyoutLifecycle.transition(true);return;
   }
-  flyout = new BrowserWindow({width:440,height:780,show:false,frame:false,transparent:true,backgroundColor:'#00000000',resizable:false,skipTaskbar:true,alwaysOnTop:true,hasShadow:true,
+  flyout = new BrowserWindow({width:440,height:720,show:false,frame:false,transparent:true,backgroundColor:'#00000000',resizable:false,skipTaskbar:true,alwaysOnTop:true,hasShadow:false,
     webPreferences:{preload:path.join(here,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,offscreen:process.argv.includes('--qa-offscreen')} });
   flyout.webContents.setWindowOpenHandler(() => ({action:'deny'}));
   flyout.webContents.on('will-navigate',event => event.preventDefault());
@@ -62,7 +72,7 @@ function schedulePolling() { clearInterval(pollTimer); pollTimer = setInterval((
 if (locked) void app.whenReady().then(async () => {
   const wasm = app.isPackaged ? path.join(process.resourcesPath,'sql-wasm.wasm') : path.join(here,'../../node_modules/sql.js/dist/sql-wasm.wasm');
   store = await Storage.open(app.getPath('userData'),wasm);
-  controller = new Controller(store, () => { for (const view of [window,flyout]) if (view && !view.isDestroyed()) view.webContents.send('changed',{...controller.snapshot(),comfortSelection}); if(tray){const ds=controller.devices;tray.setToolTip(`Gree Desktop · ${ds.filter(d=>d.online&&d.state.Pow===1).length} ligados · ${ds.filter(d=>d.online).length}/${ds.length} conectados · ${ds.filter(d=>d.externalOverride).length} protegidos`);} },safeStorage,undefined,event => {
+  controller = new Controller(store, () => { for (const view of [window,flyout]) if (view && !view.isDestroyed()) view.webContents.send('changed',{...controller.snapshot(),comfortSelection}); updateTray(); },safeStorage,undefined,event => {
     for (const view of [window,flyout]) if (view && !view.isDestroyed() && view.isVisible() && (view !== flyout || ['open','opening'].includes(flyoutLifecycle.state.phase))) view.webContents.send('deviceChange',event);
   });
   const handlers: Record<string, (...args: any[]) => unknown> = {
@@ -86,7 +96,7 @@ if (locked) void app.whenReady().then(async () => {
   // Embedded PNG keeps the tray available in packaged and development builds.
   tray = new Tray(nativeImage.createFromPath(path.join(here,'../renderer/app-icon.png')).resize({width:24,height:24}));
   tray.setToolTip('Gree Desktop · automações em segundo plano');
-  tray.setContextMenu(Menu.buildFromTemplate([{ label:'Controle rápido',click:() => showFlyout() },{ label:'Abrir painel completo',click:() => show() },{ label:'Automações',click:() => show('rules') },{ label:'Buscar aparelhos',click:() => void controller.discover() },{ type:'separator' },{ label:'Sair e parar automações',click:() => app.quit() }]));
+  tray.setContextMenu(Menu.buildFromTemplate([{ label:'Controle rápido',click:() => showFlyout() },{ label:'Abrir painel completo',click:() => show() },{ label:'Buscar aparelhos',click:() => void controller.discover() },{ type:'separator' },{ label:'Sair e parar automações',click:() => app.quit() }]));
   tray.on('click',() => showFlyout(true));
   tray.on('double-click',() => show());
   if (process.argv.includes('--qa-dashboard')) {show();if (process.argv.includes('--background'))window?.hide();}
@@ -94,7 +104,7 @@ if (locked) void app.whenReady().then(async () => {
   powerMonitor.on('suspend',() => controller.suspend());
   powerMonitor.on('resume',() => { void controller.tick().then(() => controller.poll()); });
   await controller.tick();
-  tickTimer = setInterval(() => void controller.tick().catch(console.error),1000); schedulePolling();
+  tickTimer = setInterval(() => {updateTray();void controller.tick().catch(console.error);},1000); schedulePolling();
   void controller.discover();
 }).catch(error => { console.error(error); app.quit(); });
 app.on('window-all-closed', () => {});

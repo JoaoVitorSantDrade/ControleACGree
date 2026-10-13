@@ -1,21 +1,21 @@
-# Gree Desktop 0.3.0
+# Gree Desktop 0.3.1
 
 Aplicativo Windows em português para controlar aparelhos Gree pela rede local, organizar grupos e criar automações. Electron + React + TypeScript, sem conta na nuvem.
 
-![Controle rápido pela bandeja](previews/controle-rapido.png)
+![Controle rápido pela bandeja](previews/bandeja-fundo-claro.png)
 
 ## Instalar e usar
 
-Execute `release/Gree Desktop Setup 0.3.0.exe`. O instalador permite escolher a pasta e cria um atalho na área de trabalho. O pacote não tem certificado de assinatura comercial.
+Execute `release/Gree Desktop Setup 0.3.1.exe`. O instalador permite escolher a pasta e cria um atalho na área de trabalho. O pacote não tem certificado de assinatura comercial.
 
 1. Conecte o computador à mesma rede dos aparelhos, já configurados no GREE+.
-2. Clique no ícone de floco de neve na bandeja do Windows para abrir o **controle rápido**. Selecione um aparelho ou grupo e ajuste energia, temperatura, modo e ventilação. O controle desaparece ao clicar fora ou pressionar Esc.
+2. Clique no ícone de temperatura (ou floco de neve) na bandeja do Windows para abrir o **controle rápido**. Selecione um aparelho ou grupo e ajuste energia, temperatura, modo e ventilação. O controle desaparece ao clicar fora ou pressionar Esc.
 3. Use a seta no topo para abrir o painel completo e **Buscar aparelhos**. Se necessário, use **Adicionar por IP**.
 4. No lápis de cada cartão, escolha nome e ambiente. Confirme as funções opcionais no manual ou no controle antes de habilitá-las. Turbo aparece no controle rápido quando confirmado.
 5. Use **Grupos** para comandos coletivos e **Automações** para criar regras. O histórico mostra a confirmação ou a falha de cada aparelho.
-6. Marque **Iniciar com Windows** no controle rápido ou configure em **Preferências**. A inicialização automática fica somente na bandeja; abrir manualmente mostra o controle rápido.
+6. Configure **Iniciar com Windows** em **Preferências** no Desktop. A inicialização automática fica somente na bandeja; abrir manualmente mostra o controle rápido.
 
-Se o ícone estiver oculto, abra a seta dos ícones da bandeja e arraste o floco de neve para a área visível. Clique direito oferece controle rápido, painel completo, automações e saída. O controle rápido usa o cartão escuro compacto inspirado na referência; o painel completo oferece temas claro, escuro e sistema.
+Se o ícone estiver oculto, abra a seta dos ícones da bandeja e arraste o ícone do aplicativo para a área visível. Clique direito oferece controle rápido, painel completo, automações e saída. O controle rápido usa o cartão escuro compacto inspirado na referência; o painel completo oferece temas claro, escuro e sistema.
 
 Fechar a janela mantém o processo e as regras na bandeja. Para encerrar, use **Sair e parar automações**. O computador precisa permanecer ligado e acordado.
 
@@ -26,7 +26,7 @@ Fechar a janela mantém o processo e as regras na bandeja. Para encerrar, use **
 - **Conforto:** temperaturas ambiente/definida em 1 hora, 24 horas e 7 dias; mínimo, máximo, cobertura, eventos e consulta do gráfico por teclado. A coleta começa nesta versão, com uma amostra por minuto e retenção local de 30 dias. Sensor inválido, comunicação perdida e suspensão deixam lacunas.
 - **Ligado observado:** hoje e nos últimos 7 dias, com indicação dos períodos sem observação. Isso não mede compressor, consumo, kWh ou custo; não reconstrói períodos em que o computador estava desligado.
 - **Manutenção:** lembrete de filtro por calendário, inicialmente desativado. Configure a última manutenção e o intervalo conforme o manual; o padrão sugerido é 30 dias. Marque como feito ou adie sete dias na página Conforto.
-- **Bandeja:** resumo da casa com páginas, favoritos primeiro, próxima agenda, detalhes de proteção e vista Conforto agora ao clicar na temperatura ambiente. Abrir acompanhamento leva ao mesmo aparelho. Menus e vistas permanecem sem rolagem; o ícone não pisca.
+- **Bandeja:** resumo da casa com páginas, favoritos primeiro, próxima agenda, detalhes de proteção e origem/horário da leitura ambiente. O acompanhamento de conforto, as automações e a inicialização com Windows ficam no Desktop. Menus e vistas permanecem sem rolagem; o ícone não pisca.
 
 O histórico permite filtrar controle externo e proteção, com detalhes dos campos e valores detectados. Os registros existentes da 0.2.0 continuam legíveis. Configurações anteriores são preservadas; novos registros de acompanhamento são adicionados ao mesmo SQLite.
 
@@ -91,3 +91,9 @@ npm run package
 Detalhes da validação física e das limitações de teste estão em [VALIDATION.md](VALIDATION.md).
 
 Referência do protocolo: [gree-remote](https://github.com/tomikaa87/gree-remote). A implementação deste projeto foi escrita a partir dos detalhes do protocolo.
+
+### Bandeja compacta e temperatura no ícone
+
+O controle rápido usa um trilho de 14 px, mantendo a bola e os alvos de clique. O ícone da área de notificações mostra a temperatura ambiente do primeiro aparelho favorito (ou do primeiro cadastrado quando nenhum é favorito). Passe o mouse para conferir aparelho, unidade e estado da rede. Leitura ausente, vencida ou offline restaura o ícone Gree; a temperatura definida nunca substitui o sensor. O ícone só muda quando o valor exibido muda.
+
+Não há leitura de umidade validada para estes aparelhos no protocolo local implementado. O modo Secar não mede umidade; nenhum percentual estimado é mostrado.
