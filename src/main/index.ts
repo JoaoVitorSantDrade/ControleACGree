@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, powerMonitor, safeStorage, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, powerMonitor, safeStorage, screen, dialog } from 'electron';
 import path from 'node:path';
 import { configureStartup } from './startup';
 import { fileURLToPath } from 'node:url';
@@ -109,7 +109,7 @@ if (locked) void app.whenReady().then(async () => {
   await controller.tick();
   tickTimer = setInterval(() => {updateTray();void controller.tick().catch(console.error);},1000); schedulePolling();
   void controller.discover();
-}).catch(error => { console.error(error); app.quit(); });
+}).catch(error => { console.error(error); dialog.showErrorBox('Não foi possível abrir o Gree Desktop',error instanceof Error?error.message:String(error)); app.quit(); });
 app.on('activate', () => { if(controller) show(); });
 app.on('window-all-closed', () => {});
 app.on('before-quit', event => {

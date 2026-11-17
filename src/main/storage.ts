@@ -1,5 +1,5 @@
 import initSqlJs, { type Database } from 'sql.js';
-import { existsSync, readFileSync, mkdirSync, writeFileSync, renameSync } from 'node:fs';
+import { existsSync, readFileSync, mkdirSync, writeFileSync, renameSync, openSync, fsyncSync, closeSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
 export class Storage {
   private constructor(private db: Database, private file: string) {}
@@ -7,7 +7,20 @@ export class Storage {
     mkdirSync(directory, { recursive: true });
     const file = path.join(directory, 'gree.sqlite');
     const SQL = await initSqlJs({ locateFile: () => wasm });
-    const db = new SQL.Database(existsSync(file) ? readFileSync(file) : undefined);
+    const load=(bytes:Uint8Array)=>{
+      const db=new SQL.Database(bytes);
+      try { if(db.exec('PRAGMA quick_check')[0]?.values[0]?.[0]!=='ok')throw new Error('Integridade SQLite inválida.'); return db; }
+      catch(error){db.close();throw error;}
+    };
+    let db:Database;
+    try { db=existsSync(file)?load(readFileSync(file)):new SQL.Database(); }
+    catch(error) {
+      if(!existsSync(`${file}.bak`))throw new Error('O banco de dados está danificado e não há backup automático válido. Seus arquivos foram preservados.',{cause:error});
+      try { db=load(readFileSync(`${file}.bak`)); }
+      catch { throw new Error('O banco de dados e o backup estão danificados. Seus arquivos foram preservados.',{cause:error}); }
+      copyFileSync(file,`${file}.damaged-${Date.now()}`);
+      copyFileSync(`${file}.bak`,file);
+    }
     db.run('CREATE TABLE IF NOT EXISTS records (kind TEXT NOT NULL, id TEXT NOT NULL, data TEXT NOT NULL, PRIMARY KEY(kind,id))');
     return new Storage(db, file);
   }
@@ -32,17 +45,26 @@ export class Storage {
     this.flush();
   }
   private flush() {
-    writeFileSync(`${this.file}.tmp`, this.db.export());
-    // Windows antivirus/indexing can briefly lock a just-written file. Preserve the
-    // previous database and retry the atomic replacement rather than deleting it.
-    for (let attempt=0; ; attempt++) {
-      try { renameSync(`${this.file}.tmp`, this.file); return; }
-      catch (error) {
+    const bytes=this.db.export();
+    this.writeDurable(`${this.file}.tmp`,bytes);
+    this.replaceFile(`${this.file}.tmp`,this.file);
+    this.writeDurable(`${this.file}.bak.tmp`,bytes);
+    this.replaceFile(`${this.file}.bak.tmp`,`${this.file}.bak`);
+  }
+  private replaceFile(source:string,target:string) {
+    for(let attempt=0;;attempt++) {
+      try {renameSync(source,target);return;}
+      catch(error) {
         const code=(error as NodeJS.ErrnoException).code;
-        if (attempt>=5 || !['EPERM','EACCES','EBUSY'].includes(code || '')) throw error;
+        if(attempt>=5 || !['EPERM','EACCES','EBUSY'].includes(code || ''))throw error;
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,10*2**attempt);
       }
     }
+  }
+  private writeDurable(file:string,bytes:Uint8Array) {
+    const descriptor=openSync(file,'w');
+    try { writeFileSync(descriptor,bytes);fsyncSync(descriptor); }
+    finally {closeSync(descriptor);}
   }
   close() { this.flush(); this.db.close(); }
 }

@@ -1,3 +1,16 @@
+# Validação local — Gree Desktop 0.4.2 — 17/11/2026
+
+- 53 testes passaram, incluindo banco zerado com recuperação por backup e banco sem backup preservado com erro explícito.
+- TypeScript, build e empacotamento NSIS Windows x64 concluídos.
+- Instalador executado neste computador com retorno 0; binário instalado informa 0.4.2.0.
+- Verificação de interface, leitura dos dois aparelhos e encerramento normal passaram. Nenhum comando físico foi enviado. Aplicativo reaberto sem portas de diagnóstico.
+- Incidente local: banco anterior inteiramente zerado, preservado em arquivo separado. Configurações recentes não recuperáveis a partir desse arquivo. Cadastro reconstruído com descoberta na rede; causa da corrupção não determinada.
+- Esta é uma entrega local; não afirma instalação/recuperação física em Linux/macOS.
+
+SHA256 do instalador local: `89251b654a84ab542e279c7f8a83aeab7a2072900a373449e6233c1633d49009`.
+
+## Evidências anteriores
+
 # Validação local — Gree Desktop 0.4.1 — 13/10/2026
 
 Refinamento de aletas: substituída animação por diagrama estático de direção/faixa; ensaio completo de UX e build passaram. Instalador local reconstruído com esse refinamento.
